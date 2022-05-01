@@ -1,10 +1,10 @@
 package com.example.demo.service;
 
+import com.example.demo.domain.Department;
+import com.example.demo.domain.Organization;
 import com.example.demo.dto.DepartmentDto;
 import com.example.demo.mapper.DeptMapper;
 import com.example.demo.mapper.OrgMapper;
-import com.example.demo.vo.Department;
-import com.example.demo.vo.Organization;
 import com.example.demo.error.ErrorCode;
 import com.example.demo.error.exception.CustomException;
 
@@ -58,7 +58,7 @@ public class DeptService {
             throw new CustomException(ErrorCode.BAD_REQUEST, "상위 부서가 정보가 올바르지 않습니다.");
         }
 
-        Organization orgInsertData = new Organization(dept);
+        Organization orgInsertData = new Organization(dept.getOrgId(), dept.getType(), dept.getParentOrgId());
 
         // Organizaton Table Insert
         orgMapper.insertOrganization(orgInsertData);
@@ -66,7 +66,7 @@ public class DeptService {
 
         // Department Table Insert
         dept.setOrgId(orgId);
-        Department deptEntity = new Department(dept);
+        Department deptEntity = new Department(dept.getOrgId(), dept.getCode(), dept.getName(), dept.getType());
         deptMapper.insertDepartment(deptEntity);
 
         return dept;
@@ -78,27 +78,27 @@ public class DeptService {
      * @param dept
      * @return 수정 부서 정보
      */
-    public DepartmentDto modDepartment(int orgId, DepartmentDto dept) {
+    public DepartmentDto modifyDepartment(int orgId, DepartmentDto dept) {
         // Exception. 부서 정보 예외 처리
         List<Organization> orgDataList = orgMapper.getOrgById(orgId);
-        if (orgDataList.size() == 0) {
+        if (orgDataList.isEmpty()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "부서(" + orgId + ")가 존재하지 않습니다.");
         }
 
         Organization orgData = orgDataList.get(0);
-        if (orgData.getOrgType().equals("Member")) {
+        if (orgData.isMember()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "코드(" + orgId + ")는 부서 데이터가 아닙니다.");
         }
 
         // Note. 상위 부서 변경 시 조직도 테이블 함께 변경
         orgData = orgDataList.get(0);
         if (orgData.getParentOrgId() != dept.getParentOrgId()) {
-            Organization orgUpdateData = new Organization(dept);
+            Organization orgUpdateData = new Organization(dept.getOrgId(), dept.getType(), dept.getParentOrgId());
             orgMapper.updateOrganization(orgUpdateData);
         }
 
         // Department Table Update
-        Department deptEntity = new Department(dept);
+        Department deptEntity = new Department(dept.getOrgId(), dept.getCode(), dept.getName(), dept.getType());
         deptMapper.updateDepartment(deptEntity);
 
         return dept;
@@ -110,15 +110,15 @@ public class DeptService {
      * @param dept
      * @return 삭제된 부서 Id 리스트
      */
-    public List<Integer> delDepartment(int orgId, boolean force) {
+    public List<Integer> deleteDepartment(int orgId, boolean force) {
         // Exception. 부서 정보 예외 처리
         List<Organization> orgDataList = orgMapper.getOrgById(orgId);
-        if (orgDataList.size() == 0) {
+        if (orgDataList.isEmpty()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "부서(" + orgId + ")가 존재하지 않습니다.");
         }
 
         Organization orgData = orgDataList.get(0);
-        if (orgData.getOrgType().equals("Member")) {
+        if (orgData.isMember()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "코드(" + orgId + ")는 부서 데이터가 아닙니다.");
         }
 

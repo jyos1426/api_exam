@@ -4,8 +4,6 @@ import java.util.List;
 import com.example.demo.dto.DepartmentDto;
 
 import com.example.demo.service.DeptService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,10 +12,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 부서 API Controller
@@ -27,15 +26,11 @@ import io.swagger.annotations.ApiParam;
  */
 @Api(tags = "DeptController", description = "부서 CUD Controller")
 @RequestMapping("/org")
-@Controller
+@RestController
+@RequiredArgsConstructor
 public class DeptController {
 
-    private DeptService deptService;
-
-    @Autowired
-    public DeptController(DeptService deptService) {
-        this.deptService = deptService;
-    }
+    final private DeptService deptService;
 
     /**
      * @param dept 추가할 부서 정보
@@ -43,7 +38,6 @@ public class DeptController {
      */
     @ApiOperation(value = "부서 추가 API")
     @PostMapping("/dept")
-    @ResponseBody
     public DepartmentDto addDepartment(
             @RequestBody()
             @ApiParam(value = "추가할 부서 정보", required = true) DepartmentDto dept) {
@@ -57,13 +51,12 @@ public class DeptController {
      */
     @ApiOperation(value = "부서 정보 수정 API")
     @PutMapping("/dept/{orgId}")
-    @ResponseBody
-    public DepartmentDto modDepartment(
+    public DepartmentDto modifyDepartment(
             @PathVariable
             @ApiParam(value = "수정할 조직 Id", required = true) int orgId,
             @RequestBody()
             @ApiParam(value = "수정할 부서 정보", required = true) DepartmentDto dept) {
-        return deptService.modDepartment(orgId, dept);
+        return deptService.modifyDepartment(orgId, dept);
     }
 
     /**
@@ -73,12 +66,11 @@ public class DeptController {
      */
     @ApiOperation(value = "부서 삭제 API")
     @DeleteMapping("/dept/{orgId}")
-    @ResponseBody
-    public List<Integer> delDepartment(
+    public List<Integer> deleteDepartment(
             @PathVariable
             @ApiParam(value = "삭제할 조직 Id", required = true) int orgId,
             @RequestParam(value = "force", required = false, defaultValue = "false")
             @ApiParam( value = "하위 데이터 삭제 여부", required = true) Boolean force) {
-        return deptService.delDepartment(orgId, force);
+        return deptService.deleteDepartment(orgId, force);
     }
 }

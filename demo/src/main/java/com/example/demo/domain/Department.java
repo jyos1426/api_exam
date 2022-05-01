@@ -1,7 +1,7 @@
-package com.example.demo.vo;
+package com.example.demo.domain;
 
-import com.example.demo.dto.DepartmentDto;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 부서 Entity
@@ -9,15 +9,9 @@ import lombok.Data;
  * @author hyeon
  * @since 2022-04-30
  */
-@Data
+@Getter
+@Setter
 public class Department {
-    public Department(DepartmentDto deptDto) {
-        this.orgId = deptDto.getOrgId();
-        this.deptCode = deptDto.getCode();
-        this.deptName = deptDto.getName();
-        this.deptType = deptDto.getType();
-    }
-
     /**
      * 조직 Id
      */
@@ -37,4 +31,12 @@ public class Department {
      * 조직 유형 ("Company", "Division", "Department")
      */
     private String deptType;
+
+    public Department(int orgId, String deptCode, String deptName, String deptType) {
+        this.orgId = orgId;
+        this.deptCode = deptCode;
+        this.deptName = deptName;
+        this.deptType = deptType;
+    }
+
 }

@@ -1,7 +1,7 @@
-package com.example.demo.vo;
+package com.example.demo.domain;
 
-import com.example.demo.dto.MemberDto;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 사원 Entity
@@ -9,14 +9,9 @@ import lombok.Data;
  * @author hyeon
  * @since 2022-04-30
  */
-@Data
+@Getter
+@Setter
 public class Member {
-    public Member(MemberDto memberDto) {
-        this.orgId = memberDto.getOrgId();
-        this.memName = memberDto.getName();
-        this.manager = memberDto.isManager();
-    }
-
     /**
      * 조직 Id
      */
@@ -31,4 +26,10 @@ public class Member {
      * 관리자 여부
      */
     private boolean manager;
+    
+    public Member(int orgId, String memName, boolean manager) {
+        this.orgId = orgId;
+        this.memName = memName;
+        this.manager = manager;
+    }
 }
